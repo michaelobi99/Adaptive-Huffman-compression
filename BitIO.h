@@ -79,4 +79,25 @@ namespace stl {
 			bitFile->mask = 0x80;
 		return value ? 1 : 0;
 	}
+
+	int inputBits(std::unique_ptr<BitFile>& bitFile, int bitCount) {
+		unsigned long mask, returnValue{ 0 };
+		char ch{};
+		mask = 1L << (bitCount - 1);
+		while (mask != 0) {
+			if (bitFile->mask == 0x80) {
+				bitFile->file.get(ch);
+				bitFile->rack = ch;
+				if (bitFile->rack == EOF)
+					throw FileError("An error occurre in inputBits\n");
+			}
+			if (bitFile->rack & bitFile->mask)
+				returnValue |= mask;
+			mask >>= 1;
+			bitFile->mask >>= 1;
+			if (bitFile->mask == 00)
+				bitFile->mask = 0x80;
+		}
+		return returnValue;
+	}
 }
