@@ -2,7 +2,6 @@
 #include "BitIO.h"
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <cctype>
 
 const char* compressionName = "Adaptive Huffman coding, with escape codes\n";
@@ -179,13 +178,6 @@ void UpdateModel(Tree& tree, int c) {
 		}
 		current_node = tree.nodes[current_node].parent;
 	}
-	//for (int i = 0; i < NODE_TABLE_COUNT; ++i) {
-	//	if (tree.nodes[i].child != SYMBOL_COUNT) {
-	//		//printf("c = %i = %c\n", tree.nodes[i].child, tree.nodes[i].child);
-	//		tree.leaf[tree.nodes[i].child] = i;
-	//	}
-	//}
-	
 }
 	
 
@@ -214,15 +206,16 @@ void EncodeSymbol(Tree& tree, unsigned int c, std::unique_ptr<stl::BitFile>& out
 
 int DecodeSymbol(Tree& tree, std::unique_ptr<stl::BitFile>& input) {
 	int current_node;
+	int next_bit;
 	int c;
 	current_node = ROOT_NODE;
 	while (!tree.nodes[current_node].child_is_leaf) {
 		current_node = tree.nodes[current_node].child;
-		current_node += stl::inputBit(input);
+		next_bit = stl::inputBit(input);
+		current_node += next_bit == 0 ? 1 : 0;
 	}
 	c = tree.nodes[current_node].child;
 	if (c == ESCAPE) {
-		printf("got here\n");
 		c = (int)stl::inputBits(input, 8);
 		add_new_node(tree, c);
 	}
@@ -250,8 +243,6 @@ void ExpandFile(std::unique_ptr<stl::BitFile>& input, std::fstream& output) {
 		if (!output.put(c)) {
 			throw;
 		}
-		printf("fuck this, i'm out\n");
 		UpdateModel(tree, c);
 	}
-
 }
