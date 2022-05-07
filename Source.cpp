@@ -58,7 +58,7 @@ int main() {
 		//print file sizes
 		std::cout<<std::format("Original file size = {:.1f}kb\n", fileSize(fs::path(R"(..\AdaptiveHuffmanCoding\testFile.txt)")));
 		std::cout<<std::format("Compressed file size = {:.1f}kb\n", fileSize(fs::path(R"(..\AdaptiveHuffmanCoding\testFile2.txt)")));
-		std::cout<<std::format("Compressed file size = {:.1f}kb\n", fileSize(fs::path(R"(..\AdaptiveHuffmanCoding\testFile3.txt)")));
+		std::cout<<std::format("Expanded file size = {:.1f}kb\n", fileSize(fs::path(R"(..\AdaptiveHuffmanCoding\testFile3.txt)")));
 	}
 	catch (stl::FileError const& error) {
 		std::cout << error.what();
